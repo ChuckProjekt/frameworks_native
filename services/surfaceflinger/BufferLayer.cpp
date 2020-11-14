@@ -56,8 +56,10 @@
 #include "LayerRejecter.h"
 #include "TimeStats/TimeStats.h"
 
+#ifdef QCOM_UM_FAMILY
 #include "smomo_interface.h"
 #include "layer_extn_intf.h"
+#endif
 
 namespace android {
 
@@ -73,10 +75,11 @@ BufferLayer::BufferLayer(const LayerCreationArgs& args)
 
     mPotentialCursor = args.flags & ISurfaceComposerClient::eCursorWindow;
     mProtectedByApp = args.flags & ISurfaceComposerClient::eProtectedByApp;
-
+#ifdef QCOM_UM_FAMILY
     if (mFlinger->mLayerExt) {
         mLayerClass = mFlinger->mLayerExt->GetLayerClass(mName);
     }
+#endif
 }
 
 BufferLayer::~BufferLayer() {
@@ -454,7 +457,6 @@ bool BufferLayer::onPostComposition(const DisplayDevice* display,
                                                FrameTracer::FrameEvent::PRESENT_FENCE);
         mFrameTracker.setActualPresentTime(actualPresentTime);
     }
-
     mFrameTracker.advanceFrame();
     mBufferInfo.mFrameLatencyNeeded = false;
     return true;
